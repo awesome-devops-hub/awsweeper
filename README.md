@@ -17,7 +17,7 @@ Happy erasing!
 
   ```bash
   # install it into ./bin/
-  curl -sSfL install.sh | sh -s v0.6.0
+  sh ./install.sh v0.6.0
   ```
 
 - Run the CMD awsweeper
