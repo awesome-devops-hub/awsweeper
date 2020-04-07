@@ -28,7 +28,7 @@ Happy erasing!
 
   For example:
   ```bash
-  $ awsweeper --region ap-southeast-1 --dry-run example/aws_vpc.yml
+  $ ./bin/awsweeper --region ap-southeast-1 --dry-run example/aws_vpc.yml
    • downloaded and installed provider                  name=aws version=2.43.0
    • configured provider                                name=aws version=2.43.0
    • using region: ap-southeast-1
@@ -52,7 +52,7 @@ Happy erasing!
 
 ## Dry-run mode
 
- Use `awsweeper --dry-run <config.yml>` to only show what
+ Use `./bin/awsweeper --dry-run <config.yml>` to only show what
 would be deleted. This way, you can fine-tune your yaml configuration until it works the way you want it to.
 
 
@@ -129,7 +129,7 @@ A more detailed description of the ways to filter resources:
    You can narrow down on particular types of resources by filtering on their IDs.
 
    To see what the IDs of your resources are (could be their name, ARN, a random number),
-   run awsweeper in dry-run mode: `awsweeper --dry-run all.yml`. This way, nothing is deleted but
+   run awsweeper in dry-run mode: `./bin/awsweeper --dry-run all.yml`. This way, nothing is deleted but
    all the IDs and tags of your resources are printed. Then, use this information to create the yaml file.
 
    In the example above, all roles which name starts with `foo` are deleted (the ID of roles is their name).
