@@ -1,0 +1,12 @@
+#!/bin/bash -eu
+
+cd $(dirname $0)/..
+source ./auto/set-env-vars
+
+auto/package
+
+display_status "Uploading artefacts to artefacts S3 bucket"
+aws s3 cp "${PACKAGE_NAME}" "s3://${ARTEFACT_BUCKET}/lambda/${APP_NAME}-${VERSION}.zip"
+
+rm ${PACKAGE_NAME}
+

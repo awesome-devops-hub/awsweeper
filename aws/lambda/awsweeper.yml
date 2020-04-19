@@ -1,0 +1,141 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: awsweeper is simply to cleanup aws resources.
+Parameters:
+  LambdaFunctionS3Bucket:
+    Type: String
+    Description: The S3 bucket in which the lambda function code is stored.
+  LambdaFunctionS3Key:
+    Type: String
+    AllowedPattern: .*\.zip
+    Description: The S3 object for the lambda function code package.
+  LambdaFunctionName:
+    Type: String
+    Description: express lambda function name
+  LambdaExecutionSchedule:
+    Type: String
+    Description: The schedule of the lambda function execution
+  VpcId:
+    Type: String
+    Description: Lambda VPC
+  SubnetIds:
+    Type: 'List<AWS::EC2::Subnet::Id>'
+    Description: lambda subnets
+  LambdaMemorySize:
+    Type: Number
+    Description: Lambda memory size
+  LambdaRuntime:
+    Type: String
+    Description: Lambda runtime
+  LambdaTimeout:
+    Type: Number
+    Description: Lambda timeout
+  Owner:
+    Type: String
+    Description: Service owner
+Resources:
+  LambdaExecutionRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: awsweeper-LambdaExecutionRole-function
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                  - 'ec2:CreateNetworkInterface'
+                  - 'ec2:DescribeNetworkInterfaces'
+                  - 'ec2:DeleteNetworkInterface'
+                  - 'cloudwatch:PutMetricData'
+                  - 'ec2:*'
+                  - 'iam:*'
+                  - 'autoscaling:*'
+                  - 'elasticloadbalancing:*'
+                Resource: '*'
+        - PolicyName: AwsweeperS3BucketIAMRolePolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - 's3:ListBucket'
+                  - 's3:GetBucketLocation'
+                  - 's3:GetObject'
+                Resource:
+                  - !Sub arn:aws:s3:::${LambdaFunctionS3Bucket}/*
+                Effect: Allow
+  LambdaFunction:
+    Type: 'AWS::Lambda::Function'
+    DependsOn: CloudwatchLogs
+    Properties:
+      Code:
+        S3Bucket: !Ref LambdaFunctionS3Bucket
+        S3Key: !Ref LambdaFunctionS3Key
+      FunctionName: !Ref LambdaFunctionName
+      Handler: src/awsweeper.lambda_handler
+      MemorySize: !Ref LambdaMemorySize
+      Role: !GetAtt 
+        - LambdaExecutionRole
+        - Arn
+      Runtime: !Ref LambdaRuntime
+      Timeout: !Ref LambdaTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroup
+        SubnetIds: !Ref SubnetIds
+      Tags:
+        - Key: Owner
+          Value: !Ref Owner
+  ScheduledEventRule:
+    Type: 'AWS::Events::Rule'
+    Properties:
+      Description: Scheduled Lambda Invocation Rule
+      ScheduleExpression: !Ref LambdaExecutionSchedule
+      State: ENABLED
+      Targets:
+        - Arn: !GetAtt 
+            - LambdaFunction
+            - Arn
+          Id: LambdaFunctionTarget
+  LambdaPermissionForScheduledEvents:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !GetAtt 
+        - LambdaFunction
+        - Arn
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt 
+        - ScheduledEventRule
+        - Arn
+  LambdaPermisionForS3Bucket:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !GetAtt 
+        - LambdaFunction
+        - Arn
+      Principal: s3.amazonaws.com
+      SourceAccount: '494526681395'
+      SourceArn: !Sub arn:aws:s3:::${LambdaFunctionS3Bucket}
+  LambdaSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Security Group for lambda
+      VpcId: !Ref VpcId
+  CloudwatchLogs:
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${LambdaFunctionName}'
+      RetentionInDays: '7'

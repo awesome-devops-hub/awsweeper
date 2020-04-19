@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+cd $(dirname $0)/..
+
+IMAGE="realestate/stackup:1.4.2"
+
+exec docker run -v ${PWD}/aws/lambda:/cwd \
+  --workdir /cwd \
+  --env AWS_ACCESS_KEY_ID \
+  --env AWS_SECRET_ACCESS_KEY \
+  --env AWS_SESSION_TOKEN \
+  "${IMAGE}" "$@"

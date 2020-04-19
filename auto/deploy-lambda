@@ -1,0 +1,15 @@
+#!/bin/bash -eu
+
+cd $(dirname $0)/..
+source ./auto/set-env-vars
+
+auto/package-publish
+
+display_status "Deploy ${APP_NAME}-lambda in ${AWS_REGION}"
+
+auto/stackup "${APP_NAME}-lambda" up \
+  --region "${AWS_REGION}" \
+  --template "${APP_NAME}.yml" \
+  --parameters "${APP_NAME}-params.yml" \
+  --tags "${APP_NAME}-tags.yml" \
+  --override "LambdaFunctionS3Key=lambda/${APP_NAME}-${VERSION}.zip"

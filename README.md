@@ -50,6 +50,33 @@ Happy erasing!
   
   **Please make sure to add `--dry-run` in each execution for the rehearsal before sweeping any resources**
 
+- Deploy `awsweeper` via AWS Lambda
+
+  To houseclean any irrelevant aws resources in our account, we can simply wrap up `awsweeper` into a python Lambda function, and trigger it periodically as every day at 19:00 UTC `cron(0 19 * * ? *)`, so as to let Lambda take care of every cleanup instead of human hand.
+
+  The deployment will compile and upload all the artefacts into S3 bucket which would be applied by Lambda `awsweeper` CMD execution.
+
+  Here is how to release and deploy Lambda:
+
+  ```bash
+  auto/deploy-lambda
+  ```
+
+  Here are the detailed params of Lambda in [awsweeper-params.yml](aws/lambda/awsweeper-params.yml)
+
+  ```yml
+    ---
+    LambdaFunctionS3Bucket: "awsweeper-artefact-bucket"
+    LambdaFunctionS3Key: "lambda/awsweeper.zip"
+    LambdaFunctionName: "awsweeper"
+    LambdaExecutionSchedule: "cron(0 19 * * ? *)"
+    VpcId: "vpc-xxxxxxxxxxx"
+    SubnetIds: "subnet-xxxxxxxxxx"
+    LambdaMemorySize: "256"
+    LambdaRuntime: "python3.8"
+    LambdaTimeout: "300"
+  ```
+
 ## Dry-run mode
 
  Use `./bin/awsweeper --dry-run <config.yml>` to only show what
