@@ -1,0 +1,11 @@
+---
+LambdaFunctionS3Bucket: "awsweeper-artefact-bucket"
+LambdaFunctionS3Key: "lambda/awsweeper.zip"
+LambdaFunctionName: "awsweeper"
+LambdaExecutionSchedule: "cron(0 19 * * ? *)"
+VpcId: "vpc-0fff4db7f99277b46"
+SubnetIds: "subnet-0b74782b30ef1fabb"
+LambdaMemorySize: "256"
+LambdaRuntime: "python3.8"
+LambdaTimeout: "300"
+Owner: "zhenyu.li"

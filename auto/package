@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+cd $(dirname $0)/..
+source ./auto/set-env-vars
+
+display_status "Packaging"
+
+docker-compose run \
+	--rm base \
+	sh -c "sh ./install.sh v0.6.0 \
+	&& apk add --no-cache zip \
+	&& zip -q -r awsweeper.zip src bin config"
