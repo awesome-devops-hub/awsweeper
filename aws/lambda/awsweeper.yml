@@ -32,6 +32,9 @@ Parameters:
   Owner:
     Type: String
     Description: Service owner
+  LambdaSourceAccount:
+    Type: String
+    Description: Source account
 Resources:
   LambdaExecutionRole:
     Type: 'AWS::IAM::Role'
@@ -127,7 +130,7 @@ Resources:
         - LambdaFunction
         - Arn
       Principal: s3.amazonaws.com
-      SourceAccount: '494526681395'
+      SourceAccount: !Ref LambdaSourceAccount
       SourceArn: !Sub arn:aws:s3:::${LambdaFunctionS3Bucket}
   LambdaSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
