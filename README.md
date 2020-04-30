@@ -56,26 +56,43 @@ Happy erasing!
 
   The deployment will compile and upload all the artefacts into S3 bucket which would be applied by Lambda `awsweeper` CMD execution.
 
-  Here is how to release and deploy Lambda:
+  Here is how to setup awsweeper in aws:
+  
+  - Deploy Lambda IAM role:
 
-  ```bash
-  auto/deploy-lambda
-  ```
+    ```bash
+    auto/deploy-lambda-role
+    ```
 
-  Here are the detailed params of Lambda in [awsweeper-params.yml](aws/lambda/awsweeper-params.yml)
+  - Release and deploy Lambda:
 
-  ```yml
-    ---
-    LambdaFunctionS3Bucket: "awsweeper-artefact-bucket"
-    LambdaFunctionS3Key: "lambda/awsweeper.zip"
-    LambdaFunctionName: "awsweeper"
-    LambdaExecutionSchedule: "cron(0 19 * * ? *)"
-    VpcId: "vpc-xxxxxxxxxxx"
-    SubnetIds: "subnet-xxxxxxxxxx"
-    LambdaMemorySize: "256"
-    LambdaRuntime: "python3.8"
-    LambdaTimeout: "300"
-  ```
+    ```bash
+    auto/deploy-lambda-in-<ENV>
+    ```
+
+    For example: `auto/deploy-lambda-in-Singapore` will deploy awsweeper in Singapore region.
+
+
+    Here are the detailed params of Lambda in [awsweeper-params.yml](aws/lambda/Singapore/awsweeper-params.yml)
+
+    ```yml
+      ---
+      LambdaFunctionS3Bucket: "awsweeper-artefact-bucket"
+      LambdaFunctionS3Key: "lambda/awsweeper.zip"
+      LambdaFunctionName: "awsweeper"
+      LambdaExecutionSchedule: "cron(0 19 * * ? *)"
+      VpcId: "vpc-xxxxxxxxxxx"
+      SubnetIds: "subnet-xxxxxxxxxx"
+      LambdaMemorySize: "256"
+      LambdaRuntime: "python3.8"
+      LambdaTimeout: "300"
+    ```
+
+  - Push update to Lambda in all regions:
+
+    ```bash
+    auto/deploy-lambda-in-all
+    ```
 
 ## Dry-run mode
 

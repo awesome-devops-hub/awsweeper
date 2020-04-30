@@ -1,0 +1,11 @@
+#!/bin/bash -eu
+
+./auto/deploy-lambda-role
+
+./auto/deploy-lambda-in-Seoul
+
+./auto/deploy-lambda-in-Singapore
+
+./auto/deploy-lambda-in-Sydney
+
+./auto/deploy-lambda-in-Tokyo
