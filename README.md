@@ -56,7 +56,9 @@ Happy erasing!
 
   The deployment will compile and upload all the artefacts into S3 bucket which would be applied by Lambda `awsweeper` CMD execution.
 
-  Here is how to setup awsweeper in aws:
+  Please make sure S3 bucket established in each separated regions with naming `<LambdaFunctionS3Bucket>:<S3BucketRegion>` before Lambda deployment.
+
+  The following is how to deploy Awsweeper Lambda in aws:
   
   - Deploy Lambda IAM role:
 
@@ -78,14 +80,19 @@ Happy erasing!
     ```yml
       ---
       LambdaFunctionS3Bucket: "awsweeper-artefact-bucket"
+      S3BucketRegion: "ap-southeast-1"
       LambdaFunctionS3Key: "lambda/awsweeper.zip"
       LambdaFunctionName: "awsweeper"
       LambdaExecutionSchedule: "cron(0 19 * * ? *)"
-      VpcId: "vpc-xxxxxxxxxxx"
-      SubnetIds: "subnet-xxxxxxxxxx"
+      VpcId: "vpc-xxxxxxxxxxxxxxxxx"
+      SubnetIds: "subnet-xxxxxxxxxxxxxxxxx"
       LambdaMemorySize: "256"
       LambdaRuntime: "python3.8"
       LambdaTimeout: "300"
+      LambdaSourceAccount: "494526681395"
+      LambdaExecutionRole: "arn:aws:iam::494526681395:role/awsweeper-LambdaExecutionRole-function"
+      Owner: "xxx"
+
     ```
 
   - Push update to Lambda in all regions:
