@@ -1,0 +1,13 @@
+#!/bin/bash -eu
+
+cd $(dirname $0)/..
+
+source ./auto/set-env-vars
+
+display_status "Deploy ${APP_NAME}-lambda-role in ${AWS_DEFAULT_REGION}"
+
+auto/stackup "${APP_NAME}-lambda-role" up \
+  --region "${AWS_DEFAULT_REGION}" \
+  --template "./role/${APP_NAME}.yml" \
+  --parameters "./role/${APP_NAME}-params.yml" \
+  --tags "./role/${APP_NAME}-tags.yml"

@@ -6,7 +6,7 @@ source ./auto/set-env-vars
 auto/package
 
 display_status "Uploading artefacts to artefacts S3 bucket"
-aws s3 cp "${PACKAGE_NAME}" "s3://${ARTEFACT_BUCKET}/lambda/${APP_NAME}-${VERSION}.zip"
+aws s3 cp "${PACKAGE_NAME}" "s3://${ARTEFACT_BUCKET}-$2/lambda/${APP_NAME}-$1.zip"
 
 rm ${PACKAGE_NAME}
 

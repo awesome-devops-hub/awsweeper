@@ -35,62 +35,24 @@ Parameters:
   LambdaSourceAccount:
     Type: String
     Description: Source account
-Resources:
   LambdaExecutionRole:
-    Type: 'AWS::IAM::Role'
-    Properties:
-      RoleName: awsweeper-LambdaExecutionRole-function
-      AssumeRolePolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          Effect: Allow
-          Principal:
-            Service: lambda.amazonaws.com
-          Action: 'sts:AssumeRole'
-      Path: /
-      Policies:
-        - PolicyName: root
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Action:
-                  - 'logs:CreateLogGroup'
-                  - 'logs:CreateLogStream'
-                  - 'logs:PutLogEvents'
-                  - 'ec2:CreateNetworkInterface'
-                  - 'ec2:DescribeNetworkInterfaces'
-                  - 'ec2:DeleteNetworkInterface'
-                  - 'cloudwatch:PutMetricData'
-                  - 'ec2:*'
-                  - 'iam:*'
-                  - 'autoscaling:*'
-                  - 'elasticloadbalancing:*'
-                Resource: '*'
-        - PolicyName: AwsweeperS3BucketIAMRolePolicy
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Action:
-                  - 's3:ListBucket'
-                  - 's3:GetBucketLocation'
-                  - 's3:GetObject'
-                Resource:
-                  - !Sub arn:aws:s3:::${LambdaFunctionS3Bucket}/*
-                Effect: Allow
+    Type: String
+    Description: Lambda IAM role
+  S3BucketRegion:
+      Type: String
+      Description: S3 Bucket Region
+Resources:
   LambdaFunction:
     Type: 'AWS::Lambda::Function'
     DependsOn: CloudwatchLogs
     Properties:
       Code:
-        S3Bucket: !Ref LambdaFunctionS3Bucket
+        S3Bucket: !Sub ${LambdaFunctionS3Bucket}-${S3BucketRegion}
         S3Key: !Ref LambdaFunctionS3Key
       FunctionName: !Ref LambdaFunctionName
       Handler: src/awsweeper.lambda_handler
       MemorySize: !Ref LambdaMemorySize
-      Role: !GetAtt 
-        - LambdaExecutionRole
-        - Arn
+      Role: !Ref LambdaExecutionRole
       Runtime: !Ref LambdaRuntime
       Timeout: !Ref LambdaTimeout
       VpcConfig:
@@ -131,12 +93,15 @@ Resources:
         - Arn
       Principal: s3.amazonaws.com
       SourceAccount: !Ref LambdaSourceAccount
-      SourceArn: !Sub arn:aws:s3:::${LambdaFunctionS3Bucket}
+      SourceArn: !Sub arn:aws:s3:::${LambdaFunctionS3Bucket}-${S3BucketRegion}
   LambdaSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: Security Group for lambda
       VpcId: !Ref VpcId
+      Tags:
+        - Key: Owner
+          Value: !Ref Owner
   CloudwatchLogs:
     Type: 'AWS::Logs::LogGroup'
     Properties:

@@ -4,8 +4,7 @@ APP_NAME="awsweeper"
 ARTEFACT_BUCKET="${APP_NAME}-artefact-bucket"
 ARTEFACT_BUCKET_ROLE=""
 PACKAGE_NAME="${APP_NAME}.zip"
-VERSION="$(TZ=Singapore date +'%Y%m%d%H%M')"
-AWS_REGION="ap-southeast-1"
+AWS_DEFAULT_REGION="ap-southeast-1"
 
 display_status() {
   echo ">>> $1 <<<" 1>&2

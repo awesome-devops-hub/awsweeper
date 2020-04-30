@@ -1,0 +1,4 @@
+#!/bin/bash -eu
+
+AWS_REGION="ap-southeast-1"
+VERSION="$(TZ=Singapore date +'%Y%m%d%H%M')"
