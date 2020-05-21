@@ -1,0 +1,60 @@
+aws_ami:
+  - tags:
+      NOT(Owner): .*
+aws_autoscaling_group:
+  - tags:
+      NOT(Owner): .*
+aws_cloudformation_stack:
+  - tags:
+      NOT(Owner): .*
+aws_ebs_snapshot:
+  - tags:
+      NOT(Owner): .*
+aws_ebs_volume:
+  - tags:
+      NOT(Owner): .*
+aws_ecs_cluster:
+  - tags:
+      NOT(Owner): .*
+aws_efs_file_system:
+  - tags:
+      NOT(Owner): .*
+aws_eip:
+  - tags:
+      NOT(Owner): .*
+aws_elb:
+  - tags:
+      NOT(Owner): .*
+aws_iam_user:
+  - tags:
+      NOT(Owner): .*
+aws_instance:
+  - tags:
+      NOT(Owner): .*
+aws_internet_gateway:
+  - tags:
+      NOT(Owner): .*
+aws_nat_gateway:
+  - tags:
+      NOT(Owner): .*
+aws_network_acl:
+  - tags:
+      NOT(Owner): .*
+aws_network_interface:
+  - tags:
+      NOT(Owner): .*
+aws_route_table:
+  - tags:
+      NOT(Owner): .*
+aws_security_group:
+  - tags:
+      NOT(Owner): .*
+aws_subnet:
+  - tags:
+      NOT(Owner): .*
+aws_vpc:
+  - tags:
+      NOT(Owner): .*
+aws_vpc_endpoint:
+  - tags:
+      NOT(Owner): .*

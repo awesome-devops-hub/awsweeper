@@ -7,6 +7,6 @@ display_status "Packaging"
 
 docker-compose run \
 	--rm base \
-	sh -c "sh ./install.sh v0.6.0 \
+	sh -c "sh ./install.sh v0.8.0 \
 	&& apk add --no-cache zip \
 	&& zip -q -r awsweeper.zip src bin config"
