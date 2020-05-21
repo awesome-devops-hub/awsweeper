@@ -1,7 +1,7 @@
 # AWSweeper
 
 AWSweeper is based on the cloud-agnostic Terraform API for deletion that wipes out all (or parts) of the resources in your AWS account. Resources to be deleted can be filtered by their ID, tags or
-creation date using [regular expressions](https://golang.org/pkg/regexp/syntax/) declared in a yaml file (see [config.yml](example/config.yml)).
+creation date using [regular expressions](https://golang.org/pkg/regexp/syntax/) declared in a yaml file (see [all.yml](./example/all.yml)).
 
 Happy erasing!
 
@@ -151,7 +151,7 @@ Here is a more detailed description of the various ways to filter resources:
     aws_iam_role:
     aws_instance:
    
-   Don't forget the `:` at the end of each line. Use the [all.yml](./all.yml), to delete all (currently supported)
+   Don't forget the `:` at the end of each line. Use the [all.yml](./example/all.yml), to delete all (currently supported)
    resources.
 
 ##### 2) Delete by tags
