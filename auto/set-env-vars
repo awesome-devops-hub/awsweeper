@@ -5,6 +5,7 @@ ARTEFACT_BUCKET="${APP_NAME}-artefact-bucket"
 ARTEFACT_BUCKET_ROLE=""
 PACKAGE_NAME="${APP_NAME}.zip"
 AWS_DEFAULT_REGION="ap-southeast-1"
+AWSWEEPER_VERSION="v0.8.0"
 
 display_status() {
   echo ">>> $1 <<<" 1>&2
