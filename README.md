@@ -1,45 +1,56 @@
-<p align="center">
-  <img alt="AWSweeper Logo" src="https://github.com/cloudetc/awsweeper/blob/master/img/logo.png" height="180" />
-  <h3 align="center">AWSweeper</h3>
-  <p align="center">A tool for cleaning your AWS account</p>
-</p>
+# AWSweeper
 
----
-[![Release](https://img.shields.io/github/release/cloudetc/awsweeper.svg?style=for-the-badge)](https://github.com/cloudetc/awsweeper/releases/latest)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=for-the-badge)](/LICENSE.md)
-[![Travis](https://img.shields.io/travis/cloudetc/awsweeper/master.svg?style=for-the-badge)](https://travis-ci.org/cloudetc/awsweeper)
-
-AWSweeper cleans out all (or parts) of the resources in your AWS account. Resources to be deleted can be filtered by
-their ID, tags or creation date using [regular expressions](https://golang.org/pkg/regexp/syntax/) declared via a filter
-in a YAML file (see [filter.yml](example/config.yml) as an example).
-
-AWSweeper [can delete many](#supported-resources), but not all resources yet. Your help
-to support more resources is very much appreciated ([please read this issue](https://github.com/cloudetc/awsweeper/issues/21)
- to see how easy it is). 
+AWSweeper is based on the cloud-agnostic Terraform API for deletion that wipes out all (or parts) of the resources in your AWS account. Resources to be deleted can be filtered by their ID, tags or
+creation date using [regular expressions](https://golang.org/pkg/regexp/syntax/) declared in a yaml file (see [config.yml](example/config.yml)).
 
 Happy erasing!
 
 [![AWSweeper tutorial](img/asciinema-tutorial.gif)](https://asciinema.org/a/149097)
 
-## Installation
-
-It's recommended to install a specific version of AWSweeper available on the
-[releases page](https://github.com/cloudetc/awsweeper/releases).
-
-Here is the recommended way to install AWSweeper v0.8.0:
-
-```bash
-# install it into ./bin/
-sh ./install.sh v0.8.0
-```
-
 ## Usage
 
-    awsweeper [options] <filter.yml>
+- Authenticate your SAML Identity Provider
 
-To see options available run `awsweeper --help`.
+  More details: https://gitlab.com/tw-toc/saml-aws-functions
 
-## Deploy `awsweeper` via AWS Lambda
+- Setup awsweeper latest version v0.8.0:
+
+  ```bash
+  # install it into ./bin/
+  sh ./install.sh v0.8.0
+  ```
+
+- Run the CMD awsweeper
+
+  ```bash
+  ./bin/awsweeper [options] <config.yml>
+  ```
+
+  For example:
+  ```bash
+  $ ./bin/awsweeper --region ap-southeast-1 --dry-run example/aws_vpc.yml
+   • downloaded and installed provider                  name=aws version=2.43.0
+   • configured provider                                name=aws version=2.43.0
+   • using region: ap-southeast-1
+   • SHOWING RESOURCES THAT WOULD BE DELETED (DRY RUN)
+
+	---
+	Type: aws_vpc
+	Found: 1
+
+		Id:		vpc-2afc2e4f
+		Tags:		[Name: default]
+
+	---
+
+   • TOTAL NUMBER OF RESOURCES THAT WOULD BE DELETED: 1
+  ```
+  
+  To see options available run `./bin/awsweeper --help`.
+  
+  **Please make sure to add `--dry-run` in each execution for the rehearsal before sweeping any resources**
+
+- Deploy `awsweeper` via AWS Lambda
 
   To houseclean any irrelevant aws resources in our account, we can simply wrap up `awsweeper` into a python Lambda function, and trigger it periodically as every day at 19:00 UTC `cron(0 19 * * ? *)`, so as to let Lambda take care of every cleanup instead of human hand.
 
