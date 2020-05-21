@@ -38,6 +38,9 @@ Resources:
                   - 'iam:*'
                   - 'autoscaling:*'
                   - 'elasticloadbalancing:*'
+                  - 'ecs:*'
+                  - 'cloudformation:*'
+                  - 'elasticfilesystem:*'
                 Resource: '*'
         - PolicyName: AwsweeperS3BucketIAMRolePolicy
           PolicyDocument:
