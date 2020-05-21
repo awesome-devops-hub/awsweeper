@@ -13,6 +13,6 @@ def lambda_handler(event, context):
 
     os.chdir("/tmp")
 
-    CMD2=["./bin/awsweeper", "--region", region, "--dry-run", "./config/aws_security_group.yml"]
+    CMD2=["./bin/awsweeper", "--region", region, "--dry-run", "./config/aws_resource.yml"]
     output2 = subprocess.check_output(CMD2, universal_newlines=True)
     logger.info(output2)
