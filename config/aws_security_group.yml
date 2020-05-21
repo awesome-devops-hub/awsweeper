@@ -1,5 +1,3 @@
 aws_security_group:
   - tags:
-      hehe: haha
-  - tags:
-      foo: bar1
+      NOT(Owner): .*

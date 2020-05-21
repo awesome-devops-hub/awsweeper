@@ -1,56 +1,45 @@
-# AWSweeper
+<p align="center">
+  <img alt="AWSweeper Logo" src="https://github.com/cloudetc/awsweeper/blob/master/img/logo.png" height="180" />
+  <h3 align="center">AWSweeper</h3>
+  <p align="center">A tool for cleaning your AWS account</p>
+</p>
 
-AWSweeper is based on the cloud-agnostic Terraform API for deletion that wipes out all (or parts) of the resources in your AWS account. Resources to be deleted can be filtered by their ID, tags or
-creation date using [regular expressions](https://golang.org/pkg/regexp/syntax/) declared in a yaml file (see [config.yml](example/config.yml)).
+---
+[![Release](https://img.shields.io/github/release/cloudetc/awsweeper.svg?style=for-the-badge)](https://github.com/cloudetc/awsweeper/releases/latest)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=for-the-badge)](/LICENSE.md)
+[![Travis](https://img.shields.io/travis/cloudetc/awsweeper/master.svg?style=for-the-badge)](https://travis-ci.org/cloudetc/awsweeper)
+
+AWSweeper cleans out all (or parts) of the resources in your AWS account. Resources to be deleted can be filtered by
+their ID, tags or creation date using [regular expressions](https://golang.org/pkg/regexp/syntax/) declared via a filter
+in a YAML file (see [filter.yml](example/config.yml) as an example).
+
+AWSweeper [can delete many](#supported-resources), but not all resources yet. Your help
+to support more resources is very much appreciated ([please read this issue](https://github.com/cloudetc/awsweeper/issues/21)
+ to see how easy it is). 
 
 Happy erasing!
 
 [![AWSweeper tutorial](img/asciinema-tutorial.gif)](https://asciinema.org/a/149097)
 
+## Installation
+
+It's recommended to install a specific version of AWSweeper available on the
+[releases page](https://github.com/cloudetc/awsweeper/releases).
+
+Here is the recommended way to install AWSweeper v0.8.0:
+
+```bash
+# install it into ./bin/
+sh ./install.sh v0.8.0
+```
+
 ## Usage
 
-- Authenticate your SAML Identity Provider
+    awsweeper [options] <filter.yml>
 
-  More details: https://gitlab.com/tw-toc/saml-aws-functions
+To see options available run `awsweeper --help`.
 
-- Setup awsweeper latest version v0.6.0:
-
-  ```bash
-  # install it into ./bin/
-  sh ./install.sh v0.6.0
-  ```
-
-- Run the CMD awsweeper
-
-  ```bash
-  ./bin/awsweeper [options] <config.yml>
-  ```
-
-  For example:
-  ```bash
-  $ ./bin/awsweeper --region ap-southeast-1 --dry-run example/aws_vpc.yml
-   • downloaded and installed provider                  name=aws version=2.43.0
-   • configured provider                                name=aws version=2.43.0
-   • using region: ap-southeast-1
-   • SHOWING RESOURCES THAT WOULD BE DELETED (DRY RUN)
-
-	---
-	Type: aws_vpc
-	Found: 1
-
-		Id:		vpc-2afc2e4f
-		Tags:		[Name: default]
-
-	---
-
-   • TOTAL NUMBER OF RESOURCES THAT WOULD BE DELETED: 1
-  ```
-  
-  To see options available run `./bin/awsweeper --help`.
-  
-  **Please make sure to add `--dry-run` in each execution for the rehearsal before sweeping any resources**
-
-- Deploy `awsweeper` via AWS Lambda
+## Deploy `awsweeper` via AWS Lambda
 
   To houseclean any irrelevant aws resources in our account, we can simply wrap up `awsweeper` into a python Lambda function, and trigger it periodically as every day at 19:00 UTC `cron(0 19 * * ? *)`, so as to let Lambda take care of every cleanup instead of human hand.
 
@@ -101,89 +90,85 @@ Happy erasing!
     auto/deploy-lambda-in-all
     ```
 
-## Dry-run mode
+## Filter
 
- Use `./bin/awsweeper --dry-run <config.yml>` to only show what
-would be deleted. This way, you can fine-tune your yaml configuration until it works the way you want it to.
-
-
-## Filtering
-
-Resources to be deleted are filtered by a yaml configuration. To learn how, have a look at the following example:
+Resources are deleted via a filter declared in a YAML file.
 
     aws_instance:
+      # instance filter part 1
       - id: ^foo.*
-        tags:
-          foo: bar
-          bla: blub
         created:
-          before: 2018-06-14
-          after: 2018-10-28 12:28:39.0000
+          before: 2018-10-14
+          after: 2018-06-28 12:28:39
+            
+      # instance filter part 2   
       - tags:
           foo: bar
-         created:
-           before: 2018-06-14
-      - tags:
-          foo: NOT(bar)
-        created:
-          after: 2018-06-14
-    aws_iam_role:
+          NOT(owner): .*
+           
+    aws_security_groups:
 
-This config would delete all instances which ID matches `^foo.*` *AND* which have tags `foo: bar` *AND* `bla: blub`
-*AND* which have been created between `2018-10-28 12:28:39 +0000 UTC` and `2018-06-14`. Additionally, it would delete instances
-with tag `foo: bar` and which are older than `2018-06-14`.
+The filter snippet above deletes all EC2 instances that ID matches `^foo.*` and that have been created between
+ `2018-06-28 12:28:39` and `2018-10-14` UTC (instance filter part 1); additionally, EC2 instances having a tag 
+ `foo: bar` *AND* not a tag key `owner` with any value are deleted (instance filter part 2); last but not least,
+ ALL security groups are deleted by this filter.
 
-Furthermore, this config would delete all IAM roles, as there is no list of filters provided for this resource type.
-
-The general syntax of the filter config is as follows:
+The general filter syntax is as follows:
 
     <resource type>:
-      # filter 1
       - id: <regex to filter by id> | NOT(<regex to filter by id>)
+        tagged: bool (optional)
         tags:
-          <key>: <regex to filter value> | NOT(<regex to filter value>)
+          <key> | NOT(key): <regex to filter value> | NOT(<regex to filter value>)
           ...
         created:
           before: <timestamp> (optional)
           after: <timestamp> (optional)
-      # filter 2
+      # OR
       - ...
     <resource type>:
       ...
 
-A more detailed description of the ways to filter resources:
+Here is a more detailed description of the various ways to filter resources:
 
-##### 1) All resources of a particular type
+##### 1) Delete all resources of a particular type
 
-   [Terraform types](https://www.terraform.io/docs/providers/aws/index.html) are used to identify resources of a particular type
-   (e.g., `aws_security_group` selects all resources that are security groups, `aws_iam_role` all roles,
-   or `aws_instance` all EC2 instances).
-
-   In the example above, by simply adding `security_group:` (no further filters for IDs or tags),
-   all security groups in your account would be deleted. Use the [all.yml](./all.yml), to delete all (currently supported)
+   [Terraform resource type indentifiers](https://www.terraform.io/docs/providers/aws/index.html) are used to delete 
+   resources by type. The following filter snippet deletes *ALL* security groups, IAM roles, and EC2 instances:
+   
+    aws_security_group:
+    aws_iam_role:
+    aws_instance:
+   
+   Don't forget the `:` at the end of each line. Use the [all.yml](./all.yml), to delete all (currently supported)
    resources.
 
-##### 2) By tags
+##### 2) Delete by tags
 
-   You can narrow down on particular types of resources by the tags they have.
+   If most of your resources have tags, this is probably the best way to filter them
+   for deletion. **Be aware**: Not all resources [support tags](#supported-resources) yet and can be filtered this way.
+      
+   The key and the value part of the tag filter can be negated by a surrounding `NOT(...)`. This allows for removing of 
+   all resources not matching some tag key or value. In the example below, all EC2 instances without the `owner: me`
+   tag are deleted:
 
-   If most of your resources have tags, this is probably the best to filter them
-   for deletion. But be aware: not all resources support tags and can be filtered this way.
+    aws_instance:
+      - tags:
+          NOT(Owner): me
+          
+   The flag `tagged: false` deletes all resources that have no tags. Contrary, resources with any tags can be deleted 
+   with `tagged: true`:
 
-   In the example above, all EC2 instances are terminated that have a tag with key `foo` and value `bar` as well as
-   `bla` and value `blub`.
-   
-   The tag filter can be negated by surrounding the regex with `NOT(...)`
+    aws_instance:
+      - tagged: true
 
-##### 3) By ID
+##### 3) Delete By ID
 
-   You can narrow down on particular types of resources by filtering on their IDs.
+   You can narrow down on particular types of resources by filtering on based their IDs.
 
-   To see what the IDs of your resources are (could be their name, ARN, a random number),
-   run awsweeper in dry-run mode: `./bin/awsweeper --dry-run all.yml`. This way, nothing is deleted but
-   all the IDs and tags of your resources are printed. Then, use this information to create the yaml file.
-
-   In the example above, all roles which name starts with `foo` are deleted (the ID of roles is their name).
+   To see what the ID of a resource is (could be its name, ARN, a random number),
+   run AWSweeper in dry-run mode: `awsweeper --dry-run all.yml`. This way, nothing is deleted but
+   all the IDs and tags of your resources are printed. Then, use this information to create the YAML config file.
 
    The id filter can be negated by surrounding the regex with `NOT(...)`
 
@@ -209,6 +194,11 @@ A more detailed description of the ways to filter resources:
      * Space separated, no time zone: `2006-1-2 15:4:5.999999999`
      * Date only: `2006-1-2`
 
+## Dry-run mode
+
+ Use `awsweeper --dry-run <filter.yml>` to only show what
+would be deleted. This way, you can fine-tune your YAML filter configuration until it works the way you want it to.
+
 ## Supported resources
 
 AWSweeper can currently delete more than 30 AWS resource types.
@@ -222,6 +212,7 @@ A technical reason for this is that AWSweeper is build upon the already existing
 | aws_ami                          | x             | x
 | aws_autoscaling_group            | x             | x
 | aws_cloudformation_stack         | x             | x
+| aws_cloudtrail             |               |
 | aws_cloudwatch_log_group (*new*) |               | x
 | aws_ebs_snapshot                 | x             | x
 | aws_ebs_volume                   | x             | x
@@ -255,17 +246,17 @@ A technical reason for this is that AWSweeper is build upon the already existing
    
 ## Acceptance tests
 
-***WARNING:*** Acceptance tests create real resources that might cost you money.
+***IMPORTANT:*** Acceptance tests create real resources that might cost you money. Also, note that if you contribute a PR, the [Travis build](https://travis-ci.org/github/cloudetc/awsweeper) will always fail since AWS credentials are not
+injected into the PR build coming from forks for security reasons. You can either run tests locally against your personal
+AWS account or ask me to run them for you instead.
 
 Run all acceptance tests with
 
-    make testacc
+    AWS_PROFILE=<myaccount> AWS_DEFAULT_REGION=us-west-2 make test-all
 
-or use
+or to test the working of AWSweeper for a just single resource, such as `aws_vpc`, use
 
-    make testacc TESTARGS='-run=TestAccVpc*'
-
-to test the working of AWSweeper for a just single resource, such as `aws_vpc`.
+    AWS_PROFILE=<myaccount> AWS_DEFAULT_REGION=us-west-2 make test-all TESTARGS='-run=TestAcc_Vpc*'
 
 ## Disclaimer
 
