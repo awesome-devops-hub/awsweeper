@@ -13,11 +13,11 @@ Happy erasing!
 
   More details: https://gitlab.com/tw-toc/saml-aws-functions
 
-- Setup awsweeper latest version v0.8.0:
+- Setup awsweeper latest version v0.9.0:
 
   ```bash
   # install it into ./bin/
-  sh ./install.sh v0.8.0
+  sh ./install.sh v0.9.0
   ```
 
 - Run the CMD awsweeper
@@ -66,6 +66,12 @@ Happy erasing!
     auto/deploy-lambda-role
     ```
 
+  - Package Lambda
+
+    ```bash
+    auto/package
+    ```
+
   - Release and deploy Lambda:
 
     ```bash
@@ -95,7 +101,7 @@ Happy erasing!
 
     ```
 
-  - Push update to Lambda in all regions:
+  - Push Lambda in all regions:
 
     ```bash
     auto/deploy-lambda-in-all
