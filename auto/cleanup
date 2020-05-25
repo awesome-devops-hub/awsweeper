@@ -1,0 +1,8 @@
+#!/bin/bash -eu
+
+cd $(dirname $0)/..
+
+source ./auto/set-env-vars
+
+rm ${LAMBDA_PACKAGE} 
+rmdir ./tmp/
