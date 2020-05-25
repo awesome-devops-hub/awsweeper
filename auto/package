@@ -5,8 +5,10 @@ source ./auto/set-env-vars
 
 display_status "Packaging"
 
+[ ! -d ./tmp/ ] && mkdir ./tmp/
+
 docker-compose run \
 	--rm base \
 	sh -c "sh ./install.sh ${AWSWEEPER_VERSION} \
 	&& apk add --no-cache zip \
-	&& zip -q -r awsweeper.zip src bin config"
+	&& zip -q -r ${LAMBDA_PACKAGE} src bin config"

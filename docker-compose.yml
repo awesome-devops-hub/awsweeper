@@ -10,7 +10,7 @@ services:
       - AWS_DEFAULT_REGION
       - ARTEFACT_BUCKET=awsweeper-bucket
       - APP_NAME=awsweeper
-      - PACKAGE_NAME=awsweeper.zip
+      - LAMBDA_PACKAGE=tmp/awsweeper.zip
       - DEPLOYMENT_PACKAGE_PATH=lambda/awsweeper.zip
       - LAMBDA_FUNCTION_NAME=awsweeperLoader
     volumes:

@@ -4,7 +4,7 @@ cd $(dirname $0)/..
 
 IMAGE="realestate/stackup:1.4.2"
 
-exec docker run -v ${PWD}/aws:/cwd \
+exec docker run -v ${PWD}:/cwd \
   --workdir /cwd \
   --env AWS_ACCESS_KEY_ID \
   --env AWS_SECRET_ACCESS_KEY \

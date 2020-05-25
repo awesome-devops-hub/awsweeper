@@ -8,11 +8,18 @@ source ./aws/lambda/${ENV}/awsweeper-env-vars
 
 auto/package-publish ${VERSION} ${AWS_REGION}
 
+eval "cat <<EOF
+$(cat ./aws/lambda/${APP_NAME}-tags.yml)
+EOF
+" > ./tmp/${APP_NAME}-tags.yml
+
 display_status "Deploy ${APP_NAME}-lambda in ${AWS_REGION}"
 
 auto/stackup "${APP_NAME}-lambda" up \
   --region "${AWS_REGION}" \
-  --template "./lambda/${ENV}/${APP_NAME}.yml" \
-  --parameters "./lambda/${ENV}/${APP_NAME}-params.yml" \
-  --tags "./lambda/${ENV}/${APP_NAME}-tags.yml" \
+  --template "./aws/lambda/${APP_NAME}.yml" \
+  --parameters "./aws/lambda/${ENV}/${APP_NAME}-params.yml" \
+  --tags "./tmp/${APP_NAME}-tags.yml" \
   --override "LambdaFunctionS3Key=lambda/${APP_NAME}-${VERSION}.zip"
+
+rm ./tmp/${APP_NAME}-tags.yml
