@@ -1,0 +1,14 @@
+#! /bin/bash -e
+#
+# Build Docker image
+
+cd $(dirname $0)/..
+source ./auto/set-env-vars
+
+display_status "Build the image"
+
+# Build the image
+docker build \
+  --build-arg AWSWEEPER_VERSION=${AWSWEEPER_VERSION} \
+  --build-arg AWSCLI_VERSION=${AWSCLI_VERSION} \
+  -t ${DOCKER_IMAGE} .

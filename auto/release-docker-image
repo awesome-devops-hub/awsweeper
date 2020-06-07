@@ -1,0 +1,17 @@
+#! /bin/bash -eu
+#
+# Publish Docker image
+
+cd $(dirname $0)/..
+source ./auto/set-env-vars
+
+login_ecr
+
+# Build the image
+./auto/build-docker-image
+
+# Release to registry
+docker tag ${DOCKER_IMAGE} ${DOCKER_IMAGE}:${AWSWEEPER_VERSION}
+docker push ${DOCKER_IMAGE}
+docker push ${DOCKER_IMAGE}:${AWSWEEPER_VERSION}
+display_status "Pushed docker image ${DOCKER_IMAGE} with tags ${AWSWEEPER_VERSION}, latest"

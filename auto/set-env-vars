@@ -6,7 +6,14 @@ ARTEFACT_BUCKET_ROLE=""
 LAMBDA_PACKAGE="./tmp/${APP_NAME}.zip"
 AWS_DEFAULT_REGION="ap-northeast-2"
 AWSWEEPER_VERSION="v0.9.0"
+TOC_ECR_ID="494526681395"
+DOCKER_IMAGE="${TOC_ECR_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/tw-toc/awsweeper"
+AWSCLI_VERSION="1.18.23"
 
 display_status() {
   echo ">>> $1 <<<" 1>&2
+}
+
+login_ecr() {
+	$(aws ecr get-login --registry-ids ${1:-${TOC_ECR_ID}} --region ${2:-${AWS_DEFAULT_REGION}} --no-include-email)
 }
