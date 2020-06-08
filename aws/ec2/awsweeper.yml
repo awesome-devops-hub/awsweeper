@@ -1,0 +1,98 @@
+Mappings:
+  AmiMap:
+    ap-northeast-2:
+      "ami": "ami-0726916ee1520aeed"
+
+Parameters:
+  Owner:
+    Description: The owner of the resource.
+    Type: String
+  InstanceType:
+    Description: What instance type to use
+    Type: String
+  KeyName:
+    Description: What Key Name instance uses.
+    Type: String
+  VpcId:
+    Description: VPC to deploy to.
+    Type: String
+  SubnetInstance1:
+    Description: Subnet for EC2 instance.
+    Type: String
+  SubnetInstance2:
+    Description: Subnet for EC2 instance.
+    Type: String
+  SubnetInstance3:
+    Description: Subnet for EC2 instance.
+    Type: String
+
+Resources:
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      LaunchConfigurationName:
+        Ref: LaunchConfiguration
+      DesiredCapacity: '1'
+      MinSize: '0'
+      MaxSize: '1'
+      Tags:
+        - Key: Owner
+          Value: !Ref Owner
+          PropagateAtLaunch: 'true'
+      VPCZoneIdentifier:
+        - !Ref SubnetInstance1
+        - !Ref SubnetInstance2
+        - !Ref SubnetInstance3
+      
+  ScaleDownScheduledAction:
+    Type: 'AWS::AutoScaling::ScheduledAction'
+    Properties:
+      AutoScalingGroupName: !Ref 'AutoScalingGroup'
+      DesiredCapacity: 1
+      MinSize: 0
+      Recurrence: '0 19 * * *'
+  ScaleUpScheduledAction:
+    Type: 'AWS::AutoScaling::ScheduledAction'
+    Properties:
+      AutoScalingGroupName: !Ref 'AutoScalingGroup'
+      DesiredCapacity: 0
+      MinSize: 0
+      Recurrence: '0 21 * * *'
+
+  LaunchConfiguration:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      ImageId: !FindInMap [AmiMap, !Ref "AWS::Region", ami]
+      AssociatePublicIpAddress: true
+      SecurityGroups:
+        - Ref: EC2SecurityGroup
+      InstanceType: !Ref InstanceType
+      KeyName: 
+        - !Ref KeyName
+      BlockDeviceMappings:
+        - DeviceName: "/dev/sdk"
+          Ebs:
+            VolumeSize: '8'
+        - DeviceName: "/dev/sdc"
+          VirtualName: ephemeral0
+      Tags:
+        - Key: Owner
+          Value: !Ref Owner
+          PropagateAtLaunch: 'true'
+      UserData:
+        Fn::Base64: !Sub |
+          #cloud-config
+          repo_update: true
+          repo_upgrade: all
+
+          runcmd:
+           - [ service, docker, restart ]
+
+  EC2SecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Security Group for EC2
+      VpcId: !Ref VpcId
+      Tags:
+        - Key: Owner
+          Value: !Ref Owner
