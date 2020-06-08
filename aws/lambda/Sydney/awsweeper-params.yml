@@ -1,5 +1,5 @@
 ---
-LambdaFunctionS3Bucket: "awsweeper-artefact-bucket"
+AwsweeperS3Bucket: "awsweeper-artefact-bucket"
 S3BucketRegion: "ap-southeast-2"
 LambdaFunctionS3Key: "lambda/awsweeper.zip"
 LambdaFunctionName: "awsweeper"

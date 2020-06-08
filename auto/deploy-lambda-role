@@ -8,6 +8,6 @@ display_status "Deploy ${APP_NAME}-lambda-role in ${AWS_DEFAULT_REGION}"
 
 auto/stackup "${APP_NAME}-lambda-role" up \
   --region "${AWS_DEFAULT_REGION}" \
-  --template "./aws/role/${APP_NAME}.yml" \
-  --parameters "./aws/role/${APP_NAME}-params.yml" \
-  --tags "./aws/role/${APP_NAME}-tags.yml"
+  --template "./aws/lambda/role/${APP_NAME}.yml" \
+  --parameters "./aws/lambda/role/${APP_NAME}-params.yml" \
+  --tags "./aws/lambda/role/${APP_NAME}-tags.yml"

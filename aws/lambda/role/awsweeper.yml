@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: awsweeper is simply to cleanup aws resources, we create this role to give awsweeper more power.
 Parameters:
-  LambdaFunctionS3Bucket:
+  AwsweeperS3Bucket:
     Type: String
     Description: The S3 bucket in which the lambda function code is stored.
   Owner:
@@ -9,7 +9,7 @@ Parameters:
     Description: Service owner
 Resources:
   LambdaExecutionRole:
-    Type: 'AWS::IAM::Role'
+    Type: AWS::IAM::Role
     Properties:
       RoleName: awsweeper-LambdaExecutionRole-function
       AssumeRolePolicyDocument:
@@ -50,8 +50,10 @@ Resources:
                   - 's3:ListBucket'
                   - 's3:GetBucketLocation'
                   - 's3:GetObject'
+                  - 's3:GetObjectVersion'
+                  - 's3:PutObject'
                 Resource:
-                  - !Sub arn:aws:s3:::${LambdaFunctionS3Bucket}/*
+                  - !Sub arn:aws:s3:::${AwsweeperS3Bucket}/*
                 Effect: Allow
       Tags:
         - Key: Owner

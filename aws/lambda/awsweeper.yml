@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: awsweeper is simply to cleanup aws resources.
 Parameters:
-  LambdaFunctionS3Bucket:
+  AwsweeperS3Bucket:
     Type: String
     Description: The S3 bucket in which the lambda function code is stored.
   LambdaFunctionS3Key:
@@ -47,7 +47,7 @@ Resources:
     DependsOn: CloudwatchLogs
     Properties:
       Code:
-        S3Bucket: !Sub ${LambdaFunctionS3Bucket}-${S3BucketRegion}
+        S3Bucket: !Sub ${AwsweeperS3Bucket}-${S3BucketRegion}
         S3Key: !Ref LambdaFunctionS3Key
       FunctionName: !Ref LambdaFunctionName
       Handler: src/awsweeper.lambda_handler
@@ -93,7 +93,7 @@ Resources:
         - Arn
       Principal: s3.amazonaws.com
       SourceAccount: !Ref LambdaSourceAccount
-      SourceArn: !Sub arn:aws:s3:::${LambdaFunctionS3Bucket}-${S3BucketRegion}
+      SourceArn: !Sub arn:aws:s3:::${AwsweeperS3Bucket}-${S3BucketRegion}
   LambdaSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
