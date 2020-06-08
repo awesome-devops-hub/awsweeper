@@ -1,5 +1,8 @@
 #!/bin/bash -eu
 
 cd $(dirname $0)/..
+source ./auto/set-env-vars
+
+login_ecr
 
 docker-compose run --rm awsweeper

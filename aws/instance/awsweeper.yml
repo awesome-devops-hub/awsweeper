@@ -1,0 +1,166 @@
+Mappings:
+  AmiMap:
+    ap-northeast-2:
+      "ami": "ami-0df7513a4150ce906"
+
+Parameters:
+  Owner:
+    Description: The owner of the resource.
+    Type: String
+  InstanceType:
+    Description: What instance type to use
+    Type: String
+  KeyName:
+    Description: What Key Name instance uses.
+    Type: String
+  VpcId:
+    Description: VPC to deploy to.
+    Type: String
+  SubnetInstance1:
+    Description: Subnet for EC2 instance.
+    Type: String
+  SubnetInstance2:
+    Description: Subnet for EC2 instance.
+    Type: String
+  SubnetInstance3:
+    Description: Subnet for EC2 instance.
+    Type: String
+  AwsweeperS3Bucket:
+    Description: S3 for storing awsweeper log in EC2 instance.
+    Type: String
+
+Resources:
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    DependsOn: 
+      - LaunchConfiguration
+    Properties:
+      LaunchConfigurationName:
+        Ref: LaunchConfiguration
+      DesiredCapacity: '1'
+      MinSize: '0'
+      MaxSize: '1'
+      Tags:
+        - Key: Owner
+          Value: !Ref Owner
+          PropagateAtLaunch: 'true'
+      VPCZoneIdentifier:
+        - !Ref SubnetInstance1
+        - !Ref SubnetInstance2
+        - !Ref SubnetInstance3
+      
+  ScaleDownScheduledAction:
+    Type: 'AWS::AutoScaling::ScheduledAction'
+    Properties:
+      AutoScalingGroupName: !Ref 'AutoScalingGroup'
+      DesiredCapacity: 1
+      MinSize: 0
+      Recurrence: '0 19 * * *'
+  ScaleUpScheduledAction:
+    Type: 'AWS::AutoScaling::ScheduledAction'
+    Properties:
+      AutoScalingGroupName: !Ref 'AutoScalingGroup'
+      DesiredCapacity: 0
+      MinSize: 0
+      Recurrence: '0 21 * * *'
+
+  LaunchConfiguration:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    DependsOn: 
+    - InstanceSecurityGroup
+    - RootInstanceProfile
+    Properties:
+      ImageId: !FindInMap [AmiMap, !Ref "AWS::Region", ami]
+      AssociatePublicIpAddress: true
+      IamInstanceProfile: !Ref RootInstanceProfile
+      SecurityGroups: 
+        - Ref: InstanceSecurityGroup
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
+      BlockDeviceMappings:
+        - DeviceName: "/dev/sdk"
+          Ebs:
+            VolumeSize: '8'
+        - DeviceName: "/dev/sdc"
+          VirtualName: ephemeral0
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          export PATH="$PATH:/bin:/sbin:/usr/bin:/usr/local/bin"
+
+          cd /tmp/ && git clone git@gitlab.com:tw-toc/awsweeper.git
+          cd /tmp/awsweeper/ && auto/dev
+
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for EC2
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Owner
+          Value: !Ref Owner
+  
+  RootInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    DependsOn: 
+    - InstanceExecutionRole
+    Properties:
+      Path: /
+      Roles: [!Ref InstanceExecutionRole]
+  
+  InstanceExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: awsweeper-InstanceExecutionRole-function
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: ec2.amazonaws.com
+          Action: 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                  - 'ec2:CreateNetworkInterface'
+                  - 'ec2:DescribeNetworkInterfaces'
+                  - 'ec2:DeleteNetworkInterface'
+                  - 'cloudwatch:PutMetricData'
+                  - 'ec2:*'
+                  - 'iam:*'
+                  - 'autoscaling:*'
+                  - 'elasticloadbalancing:*'
+                  - 'ecs:*'
+                  - 'cloudformation:*'
+                  - 'elasticfilesystem:*'
+                  - 'ecr:*'
+                Resource: '*'
+        - PolicyName: AwsweeperS3BucketIAMRolePolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - 's3:ListBucket'
+                  - 's3:GetBucketLocation'
+                  - 's3:GetObject'
+                  - 's3:GetObjectVersion'
+                  - 's3:PutObject'
+                Resource:
+                  - !Sub arn:aws:s3:::${AwsweeperS3Bucket}/*
+                Effect: Allow
+      Tags:
+        - Key: Owner
+          Value: !Ref Owner
