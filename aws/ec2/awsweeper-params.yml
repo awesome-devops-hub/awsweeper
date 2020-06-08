@@ -1,0 +1,9 @@
+---
+  Owner: "zhenyu.li"
+  InstanceType: "t2.micro"
+  KeyName: "docker-baseami"
+  VpcId: "vpc-0a231b48717ee3f30"
+  SubnetInstance1: "subnet-02676adbe6624b424"
+  SubnetInstance2: "subnet-07c414c90fdd96f16"
+  SubnetInstance3: "subnet-02a0a6a0ee3022c11"
+  
