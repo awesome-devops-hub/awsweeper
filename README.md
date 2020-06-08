@@ -107,6 +107,22 @@ Happy erasing!
     auto/deploy-lambda-in-all
     ```
 
+- Deploy `awsweeper` via AWS ASG+EC2
+
+  To houseclean any irrelevant aws resources with minimal aws resource cost in our account, we can also simply wrap up `awsweeper` into a docker image, use ASG Schedule Action to Launch docker in EC2 at `0 19 * * *` and terminate at `0 21 * * *`, let EC2 spin up each cleanup in regular time instead of human hand.
+
+  - Package and release Docker
+
+    ```bash
+    auto/release-docker-image
+    ```
+
+  - Deploy ASG+EC2+IAMRole:
+
+    ```bash
+    auto/deploy-instance
+    ```
+
 ## Filter
 
 Resources are deleted via a filter declared in a YAML file.
