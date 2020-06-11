@@ -28,6 +28,27 @@ Parameters:
   AwsweeperS3Bucket:
     Description: S3 for storing awsweeper log in EC2 instance.
     Type: String
+  ScaleUpRecurrence:
+    Description: Recurrence of ScaleUpScheduledAction.
+    Type: String
+  ScaleDownRecurrence:
+    Description: Recurrence of ScaleDownScheduledAction.
+    Type: String
+  ScaleUpDesiredCapacity:
+    Description: DesiredCapacity of ScaleUpScheduledAction.
+    Type: String
+  ScaleDownDesiredCapacity:
+    Description: DesiredCapacity of ScaleDownScheduledAction.
+    Type: String
+  MinSize:
+    Description: AutoScaling Minsize.
+    Type: String
+  MaxSize:
+    Description: AutoScaling Maxsize.
+    Type: String
+  DefaultDesiredCapacity:
+    Description: Default DesiredCapacity of AutoScaling.
+    Type: String
 
 Resources:
   AutoScalingGroup:
@@ -37,9 +58,9 @@ Resources:
     Properties:
       LaunchConfigurationName:
         Ref: LaunchConfiguration
-      DesiredCapacity: '1'
-      MinSize: '0'
-      MaxSize: '1'
+      DesiredCapacity: !Ref DefaultDesiredCapacity
+      MinSize: !Ref MinSize
+      MaxSize: !Ref MaxSize
       Tags:
         - Key: Owner
           Value: !Ref Owner
@@ -49,20 +70,21 @@ Resources:
         - !Ref SubnetInstance2
         - !Ref SubnetInstance3
       
-  ScaleDownScheduledAction:
-    Type: 'AWS::AutoScaling::ScheduledAction'
-    Properties:
-      AutoScalingGroupName: !Ref 'AutoScalingGroup'
-      DesiredCapacity: 1
-      MinSize: 0
-      Recurrence: '0 19 * * *'
   ScaleUpScheduledAction:
     Type: 'AWS::AutoScaling::ScheduledAction'
     Properties:
       AutoScalingGroupName: !Ref 'AutoScalingGroup'
-      DesiredCapacity: 0
-      MinSize: 0
-      Recurrence: '0 21 * * *'
+      DesiredCapacity: !Ref ScaleUpDesiredCapacity
+      MinSize: !Ref MinSize
+      Recurrence: !Ref ScaleUpRecurrence
+
+  ScaleDownScheduledAction:
+    Type: 'AWS::AutoScaling::ScheduledAction'
+    Properties:
+      AutoScalingGroupName: !Ref 'AutoScalingGroup'
+      DesiredCapacity: !Ref ScaleDownDesiredCapacity
+      MinSize: !Ref MinSize
+      Recurrence: !Ref ScaleDownRecurrence
 
   LaunchConfiguration:
     Type: AWS::AutoScaling::LaunchConfiguration
