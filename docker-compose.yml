@@ -19,7 +19,7 @@ services:
     command: /bin/sh
 
   awsweeper:
-    image: 494526681395.dkr.ecr.ap-northeast-2.amazonaws.com/tw-toc/awsweeper:v0.9.0
+    image: 494526681395.dkr.ecr.ap-northeast-2.amazonaws.com/tw-toc/awsweeper:v0.10.0
     environment:
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
