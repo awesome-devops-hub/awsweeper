@@ -13,11 +13,11 @@ Happy erasing!
 
   More details: https://gitlab.com/tw-toc/saml-aws-functions
 
-- Setup awsweeper latest version v0.9.0:
+- Setup awsweeper latest version v0.10.0:
 
   ```bash
   # install it into ./bin/
-  sh ./install.sh v0.9.0
+  sh ./install.sh v0.10.0
   ```
 
 - Run the CMD awsweeper
