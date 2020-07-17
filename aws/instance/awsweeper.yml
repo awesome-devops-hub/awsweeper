@@ -110,7 +110,7 @@ Resources:
           #!/bin/bash
           export PATH="$PATH:/bin:/sbin:/usr/bin:/usr/local/bin"
 
-          cd /tmp/ && git clone git@gitlab.com:tw-toc/awsweeper.git
+          cd /tmp/ && git clone https://github.com/awesome-devops-hub/awsweeper.git
           cd /tmp/awsweeper/ && auto/dev
 
   InstanceSecurityGroup:
