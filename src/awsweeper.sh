@@ -4,7 +4,7 @@ cd $(dirname $0)/..
 
 APP_NAME="awsweeper"
 TIME_STAMP="$(TZ=Singapore date +'%Y%m%d%H%M')"
-SWEEP_REGION=("ap-northeast-1" "ap-northeast-2" "ap-southeast-1" "ap-southeast-2")
+SWEEP_REGION=("ap-northeast-1" "ap-northeast-2" "ap-southeast-1" "ap-southeast-2" "us-east-1" "us-east-2")
 AWSWEEPER_LOG="/tmp/awsweeper-${TIME_STAMP}.log"
 AWSWEEPER_CFG="./config/aws_resource.yml"
 ARTEFACT_BUCKET="${APP_NAME}-artefact-bucket"
