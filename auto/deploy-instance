@@ -3,6 +3,7 @@
 cd $(dirname $0)/..
 
 source ./auto/set-env-vars
+source ./src/env
 
 [ ! -d ./tmp/ ] && mkdir ./tmp/
 

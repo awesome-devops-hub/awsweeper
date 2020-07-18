@@ -1,3 +1,4 @@
 ---
 Owner: zhenyu.li
 awsweeper_version: ${AWSWEEPER_VERSION}
+action_mode: ${ACTION_MODE}

@@ -3,3 +3,4 @@ awsweeper.zip
 .terradozer/*
 tmp/*
 log/*
+bin/*
