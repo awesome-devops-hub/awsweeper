@@ -169,6 +169,16 @@ Resources:
                   - 'cloudformation:*'
                   - 'elasticfilesystem:*'
                   - 'ecr:*'
+                  - 'apigateway:*'
+                  - 'lambda:*'
+                  - 'sns:*'
+                  - 'sqs:*'
+                  - 'events:*'
+                  - 'cloudwatch:*'
+                  - 'logs:*'
+                  - 's3:*'
+                  - 'dynamodb:*'
+                  - 'kms:*'
                 Resource: '*'
         - PolicyName: AwsweeperS3BucketIAMRolePolicy
           PolicyDocument:
