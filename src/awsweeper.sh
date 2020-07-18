@@ -16,7 +16,7 @@ FORCE="-force"
 for region in ${SWEEP_REGION[@]}
 do
     echo ">>> Start sweeping in $region  <<<" 2>&1 | tee -a ${AWSWEEPER_LOG}
-    ./bin/awsweeper --region $region ${FORCE} ${AWSWEEPER_CFG} 2>&1 | tee -a ${AWSWEEPER_LOG}
+    ./bin/awsweeper --region $region ${DRY_RUN} ${AWSWEEPER_CFG} 2>&1 | tee -a ${AWSWEEPER_LOG}
     echo ">>> Finished sweeping in $region <<<" 2>&1 | tee -a ${AWSWEEPER_LOG}
 done
 
