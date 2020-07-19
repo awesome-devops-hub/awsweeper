@@ -10,6 +10,8 @@ TOC_ECR_ID="494526681395"
 DOCKER_IMAGE="${TOC_ECR_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/tw-toc/awsweeper"
 AWSCLI_VERSION="1.18.23"
 DATE_TIME="$(TZ=UTC date +'%Y-%m-%dT%H:%M:%S UTC')"
+STACKUP_IMAGE="realestate/stackup"
+STACKUP_VERSION="1.5.0"
 
 display_status() {
   echo ">>> $1 <<<" 1>&2
