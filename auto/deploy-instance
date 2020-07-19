@@ -12,12 +12,18 @@ $(cat ./aws/instance/${APP_NAME}-tags.yml)
 EOF
 " > ./tmp/${APP_NAME}-tags.yml
 
+eval "cat <<EOF
+$(cat ./aws/instance/${APP_NAME}-params.yml)
+EOF
+" > ./tmp/${APP_NAME}-params.yml
+
 display_status "Deploy ${APP_NAME}-instance in ${AWS_DEFAULT_REGION}"
 
 auto/stackup "${APP_NAME}-instance" up \
   --region "${AWS_DEFAULT_REGION}" \
   --template "./aws/instance/${APP_NAME}.yml" \
-  --parameters "./aws/instance/${APP_NAME}-params.yml" \
+  --parameters "./tmp/${APP_NAME}-params.yml" \
   --tags "./tmp/${APP_NAME}-tags.yml" \
 
 rm ./tmp/${APP_NAME}-tags.yml
+rm ./tmp/${APP_NAME}-params.yml

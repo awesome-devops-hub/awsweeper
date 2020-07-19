@@ -15,3 +15,5 @@ ScaleUpRecurrence: "0 19 * * *"
 ScaleUpDesiredCapacity: "1"
 ScaleDownRecurrence: "0 21 * * *"
 ScaleDownDesiredCapacity: "0"
+DateTime: ${DATE_TIME}
+AwsweeperVersion: ${AWSWEEPER_VERSION}
