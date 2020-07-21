@@ -5,13 +5,16 @@ ARTEFACT_BUCKET="${APP_NAME}-artefact-bucket"
 ARTEFACT_BUCKET_ROLE=""
 LAMBDA_PACKAGE="./tmp/${APP_NAME}.zip"
 AWS_DEFAULT_REGION="ap-northeast-2"
+TIME_STAMP="$(TZ=UTC date +'%Y%m%d%H%M%S')"
 AWSWEEPER_VERSION="v0.10.1"
+AWSWEEPER_IMAGE_VERSION="${AWSWEEPER_VERSION}.${TIME_STAMP}"
 TOC_ECR_ID="494526681395"
-DOCKER_IMAGE="${TOC_ECR_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/tw-toc/awsweeper"
+AWSWEEPER_IMAGE="${TOC_ECR_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/tw-toc/awsweeper"
 AWSCLI_VERSION="1.18.23"
 DATE_TIME="$(TZ=UTC date +'%Y-%m-%dT%H:%M:%S UTC')"
 STACKUP_IMAGE="realestate/stackup"
 STACKUP_VERSION="1.5.0"
+ARTIFACT="./tmp/artifacts.conf"
 
 display_status() {
   echo ">>> $1 <<<" 1>&2

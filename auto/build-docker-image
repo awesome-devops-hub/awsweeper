@@ -11,4 +11,4 @@ display_status "Build the image"
 docker build \
   --build-arg AWSWEEPER_VERSION=${AWSWEEPER_VERSION} \
   --build-arg AWSCLI_VERSION=${AWSCLI_VERSION} \
-  -t ${DOCKER_IMAGE} .
+  -t ${AWSWEEPER_IMAGE} .

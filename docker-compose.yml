@@ -18,8 +18,8 @@ services:
     working_dir: /app
     command: /bin/sh
 
-  awsweeper:
-    image: 494526681395.dkr.ecr.ap-northeast-2.amazonaws.com/tw-toc/awsweeper:v0.10.1
+  dev:
+    image: ${AWSWEEPER_IMAGE}
     environment:
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
@@ -27,4 +27,13 @@ services:
       - AWS_DEFAULT_REGION
     volumes:
       - ./log/:/app/log/
+    working_dir: /app
+
+  awsweeper:
+    image: ${AWSWEEPER_IMAGE}
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_SESSION_TOKEN
+      - AWS_DEFAULT_REGION
     working_dir: /app

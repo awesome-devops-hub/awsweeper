@@ -55,6 +55,12 @@ Parameters:
   AwsweeperVersion:
     Description: The version of awsweeper.
     Type: String
+  AwsweeperImage:
+    Description: The docker image address of awsweeper.
+    Type: String
+  StackupVersion:
+    Description: The version of stackup.
+    Type: String
 
 Resources:
   AutoScalingGroup:
@@ -117,12 +123,23 @@ Resources:
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
-          export PATH="$PATH:/bin:/sbin:/usr/bin:/usr/local/bin"
+
           DATE_TIME="${DateTime}"
           AWSWEEPER_VERSION="${AwsweeperVersion}"
-          echo "INFO: [${!DATE_TIME}] Startup awsweeper ${!AWSWEEPER_VERSION}"
+          AWSWEEPER_IMAGE="${AwsweeperImage}"
+
+          export PATH="$PATH:/bin:/sbin:/usr/bin:/usr/local/bin"
+          echo "INFO: [${!DATE_TIME}] Startup awsweeper ${!AWSWEEPER_VERSION} via docker image ${!AWSWEEPER_IMAGE}"
           cd /tmp/ && git clone https://github.com/awesome-devops-hub/awsweeper.git
-          cd /tmp/awsweeper/ && auto/dev
+          cd /tmp/awsweeper/
+          [ ! -d ./tmp/ ] && mkdir ./tmp/
+          echo "${!AWSWEEPER_IMAGE}" > ./tmp/artifacts.conf
+          source ./auto/set-env-vars
+          [ -f ./tmp/artifacts.conf ] && export AWSWEEPER_IMAGE=$(cat ./tmp/artifacts.conf)
+
+          login_ecr
+
+          docker-compose run --rm awsweeper
 
   InstanceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -207,3 +224,15 @@ Resources:
       Tags:
         - Key: Owner
           Value: !Ref Owner
+
+Outputs:
+  StackupVersion:
+    Value: !Ref StackupVersion
+  StackupTarget:
+    Value: ec2
+  IamRoleArn:
+    Value: !GetAtt
+      - InstanceExecutionRole
+      - Arn
+  AutoscalingGroup:
+    Value: !Ref AutoScalingGroup

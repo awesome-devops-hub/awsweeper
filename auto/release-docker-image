@@ -7,11 +7,15 @@ source ./auto/set-env-vars
 
 login_ecr
 
+[ ! -d ./tmp/ ] && mkdir ./tmp/
+
 # Build the image
 ./auto/build-docker-image
 
 # Release to registry
-docker tag ${DOCKER_IMAGE} ${DOCKER_IMAGE}:${AWSWEEPER_VERSION}
-docker push ${DOCKER_IMAGE}
-docker push ${DOCKER_IMAGE}:${AWSWEEPER_VERSION}
-display_status "Pushed docker image ${DOCKER_IMAGE} with tags ${AWSWEEPER_VERSION}, latest"
+_AWSWEEPER_IMAGE=${AWSWEEPER_IMAGE}:${AWSWEEPER_IMAGE_VERSION}
+docker tag ${AWSWEEPER_IMAGE} ${_AWSWEEPER_IMAGE}
+docker push ${AWSWEEPER_IMAGE}
+docker push ${_AWSWEEPER_IMAGE}
+display_status "Pushed docker image ${AWSWEEPER_IMAGE} with tags ${_AWSWEEPER_IMAGE}, latest"
+echo ${_AWSWEEPER_IMAGE} > ./tmp/artifacts.conf

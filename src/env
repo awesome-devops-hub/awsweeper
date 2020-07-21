@@ -3,7 +3,7 @@
 APP_NAME="awsweeper"
 TIME_STAMP="$(TZ=UTC date +'%Y%m%d%H%M')"
 SWEEP_REGION=("ap-northeast-1" "ap-northeast-2" "ap-southeast-1" "ap-southeast-2" "us-east-1" "us-east-2")
-AWSWEEPER_LOG="/tmp/awsweeper-${TIME_STAMP}.log"
+AWSWEEPER_LOG="./log/awsweeper-${TIME_STAMP}.log"
 AWSWEEPER_CFG="./config/aws_resource.yml"
 ARTEFACT_BUCKET="${APP_NAME}-artefact-bucket"
 AWS_DEFAULT_REGION="ap-northeast-2"

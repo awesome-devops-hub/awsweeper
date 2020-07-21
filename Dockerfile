@@ -25,6 +25,8 @@ USER appuser
 COPY --chown=appuser:appuser install.sh /app/
 RUN sh /app/install.sh $AWSWEEPER_VERSION
 
+RUN mkdir -p log/ && chown -R appuser:appuser log/
+
 COPY --chown=appuser:appuser src/env /app/src/
 COPY --chown=appuser:appuser src/awsweeper.sh /app/src/
 COPY --chown=appuser:appuser config/ /app/config/

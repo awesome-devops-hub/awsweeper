@@ -5,4 +5,6 @@ source ./auto/set-env-vars
 
 login_ecr
 
-docker-compose run --rm awsweeper
+[ -f ${ARTIFACT} ] && export AWSWEEPER_IMAGE=$(cat ${ARTIFACT})
+
+docker-compose run --rm dev

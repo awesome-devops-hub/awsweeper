@@ -12,6 +12,8 @@ $(cat ./aws/instance/${APP_NAME}-tags.yml)
 EOF
 " > ./tmp/${APP_NAME}-tags.yml
 
+[ -f ${ARTIFACT} ] && export AWSWEEPER_IMAGE=$(cat ${ARTIFACT})
+
 eval "cat <<EOF
 $(cat ./aws/instance/${APP_NAME}-params.yml)
 EOF
@@ -25,5 +27,4 @@ auto/stackup "${APP_NAME}-instance" up \
   --parameters "./tmp/${APP_NAME}-params.yml" \
   --tags "./tmp/${APP_NAME}-tags.yml" \
 
-rm ./tmp/${APP_NAME}-tags.yml
-rm ./tmp/${APP_NAME}-params.yml
+auto/cleanup

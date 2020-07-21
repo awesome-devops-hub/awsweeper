@@ -4,5 +4,9 @@ cd $(dirname $0)/..
 
 source ./auto/set-env-vars
 
-rm ${LAMBDA_PACKAGE} 
-rmdir ./tmp/
+[ -f ${LAMBDA_PACKAGE} ] && rm ${LAMBDA_PACKAGE}
+[ -f ./tmp/${APP_NAME}-tags.yml ] && rm ./tmp/${APP_NAME}-tags.yml
+[ -f ./tmp/${APP_NAME}-params.yml ] && rm ./tmp/${APP_NAME}-params.yml
+[ -f ./tmp/artifacts.conf ] && rm ./tmp/artifacts.conf
+
+[ -d ./tmp/ ] && rmdir ./tmp/
