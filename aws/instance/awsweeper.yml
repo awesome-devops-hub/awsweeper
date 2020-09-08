@@ -22,9 +22,6 @@ Parameters:
   SubnetInstance2:
     Description: Subnet for EC2 instance.
     Type: String
-  SubnetInstance3:
-    Description: Subnet for EC2 instance.
-    Type: String
   AwsweeperS3Bucket:
     Description: S3 for storing awsweeper log in EC2 instance.
     Type: String
@@ -78,9 +75,8 @@ Resources:
           Value: !Ref Owner
           PropagateAtLaunch: 'true'
       VPCZoneIdentifier:
-        - !Ref SubnetInstance3
-        - !Ref SubnetInstance2
         - !Ref SubnetInstance1
+        - !Ref SubnetInstance2
     UpdatePolicy:
       AutoScalingReplacingUpdate:
         WillReplace: Yes
