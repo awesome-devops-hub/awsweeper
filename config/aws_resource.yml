@@ -40,9 +40,6 @@ aws_nat_gateway:
 aws_network_acl:
   - tags:
       NOT(Owner): .*
-aws_network_interface:
-  - tags:
-      NOT(Owner): .*
 aws_route_table:
   - tags:
       NOT(Owner): .*
