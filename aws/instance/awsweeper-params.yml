@@ -1,7 +1,7 @@
 ---
 Owner: "zhenyu.li"
 InstanceType: "t2.micro"
-KeyName: "docker-baseami"
+KeyName: "awsweeper-ap-northeast-2"
 VpcId: "vpc-cfeb22a7"
 SubnetInstance1: "subnet-2277d04a"
 SubnetInstance2: "subnet-a93f2ee4"
