@@ -1,9 +1,6 @@
 aws_ami:
   - tags:
       NOT(Owner): .*
-aws_autoscaling_group:
-  - tags:
-      NOT(Owner): .*
 aws_cloudformation_stack:
   - tags:
       NOT(Owner): .*
