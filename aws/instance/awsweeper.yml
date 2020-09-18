@@ -135,6 +135,9 @@ Resources:
 
           login_ecr
 
+          echo -e "Wait 60s until all deployment resources are tagged properly"
+          sleep 60
+
           docker-compose run --rm awsweeper
 
   InstanceSecurityGroup:
