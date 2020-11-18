@@ -79,7 +79,7 @@ Resources:
         - !Ref SubnetInstance2
     UpdatePolicy:
       AutoScalingReplacingUpdate:
-        WillReplace: Yes
+        WillReplace: true
       
   ScaleUpScheduledAction:
     Type: 'AWS::AutoScaling::ScheduledAction'
