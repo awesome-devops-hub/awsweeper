@@ -1,6 +1,9 @@
 aws_ami:
   - tags:
       NOT(Owner): .*
+aws_autoscaling_group:
+  - tags:
+      NOT(Owner): .*
 aws_cloudformation_stack:
   - tags:
       NOT(Owner): .*
@@ -20,6 +23,9 @@ aws_eip:
   - tags:
       NOT(Owner): .*
 aws_elb:
+  - tags:
+      NOT(Owner): .*
+aws_lb:
   - tags:
       NOT(Owner): .*
 aws_iam_user:

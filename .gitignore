@@ -1,6 +1,6 @@
 .DS_Store
 awsweeper.zip
-.terradozer/*
-tmp/*
-log/*
-bin/*
+.terradozer/
+tmp/
+log/
+bin/
